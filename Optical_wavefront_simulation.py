@@ -11,7 +11,6 @@ import matplotlib.pyplot as plt
 
 theta = 90
 theta_val = np.deg2rad(theta)
-
 class laser:
     def __init__ (self):
         self.power = 1
@@ -82,9 +81,3 @@ polarization_df = pol_wavefront_obj.values(df.iloc[0], df.iloc[1])
 
 print("\npolarization on each analyzer:")
 print(f"{polarization_df.iloc[0]}\n")
-
-    
-    
-
-
-
