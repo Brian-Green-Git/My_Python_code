@@ -14,7 +14,7 @@ def array_modifier(lst, value, index):
     
     # 2. Slice the array into two parts: before the index and after
     part_1 = arr[:index] # everything before index
-    part_2 = arr[index:] # everthing after index
+    part_2 = arr[index:] # everything after index
     
     # 3. Join them back together with the new value in the middle
     # Note: the value must be wrapped in a list or array to concatenate
@@ -60,7 +60,6 @@ def dtype_converter(bits, value):
     try:
         if bits == 8:
             return np.array(value+1, dtype=np.int8)
-        # Write your code here
         if bits == 16:
             return np.array(value +1, dtype= np.int16)
         if bits == 32:
@@ -212,25 +211,6 @@ def calculate(lst1, lst2):
 
     return(np.dot(res1, res2))
  
-
-   
-import sql as sql
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 
