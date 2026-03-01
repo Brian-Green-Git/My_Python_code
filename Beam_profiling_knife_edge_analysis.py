@@ -16,7 +16,7 @@ df = pd.read_csv(r"C:\Users\brian green\Desktop\Python\Python\Beam_profiling_res
 
 #%% Measurement positions of scanning sensor
 
-sensor_position = np.arange(0.02, 0.41, 0.02)
+sensor_position = np.arange(0.02, 0.41, 0.02) # Positions are in meters
 
 Beam_waist_vs_position_df = pd.DataFrame(sensor_position, columns = ["Position"])
 
@@ -132,8 +132,7 @@ def beam_waist(sigma):
     beam_waist = 2 * sigma
     beam_waist_list.append(beam_waist)  
     
-    # print("Beam waist (1/e^2 radius):", beam_waist)
-    
+    # print("Beam waist (1/e^2 radius):", beam_waist    
 
 for i in range(1, 21, 1):
     
@@ -160,8 +159,7 @@ for i in range(1, 21, 1):
     
     # equation = f"y_{i} = {amplitude:.10f} * exp(-(x - {mean:.10f})^2 / (2 * {sigma:.10f}^2))"
     # print(f"\nPosition {i} Equation: {equation}\n\n")
-    
-    
+       
     # plt.figure()
     # plt.legend()
     # plt.xlabel("Position_" + str(i))
@@ -183,13 +181,13 @@ Beam_waist_vs_position_df["Waist^2"] = Beam_waist_vs_position_df["Waist"]**2
 
 #%% Plotting Position VS beam waist
 
-plt.figure()
-plt.title("Position VS Waist")
-plt.xlabel("Positon of sensor")
-plt.ylabel("Beam waist")
-plt.scatter(Beam_waist_vs_position_df["Position"], Beam_waist_vs_position_df["Waist"], color = "black")
-plt.plot(Beam_waist_vs_position_df["Position"], Beam_waist_vs_position_df["Waist"], color = "black", zorder = 2)
-plt.show()
+# plt.figure()
+# plt.title("Position VS Waist")
+# plt.xlabel("Positon of sensor")
+# plt.ylabel("Beam waist")
+# plt.scatter(Beam_waist_vs_position_df["Position"], Beam_waist_vs_position_df["Waist"], color = "black")
+# plt.plot(Beam_waist_vs_position_df["Position"], Beam_waist_vs_position_df["Waist"], color = "black", zorder = 2)
+# plt.show()
 
 #%% Plotting Position VS Beam waist squared
 
@@ -240,7 +238,6 @@ Wavelength = 633E-9
 W_o = float()
 Z_o = float()
 
-
 #%%
 
 Z_o = b/(-2 * a) 
@@ -258,3 +255,12 @@ M_sqr = val * (pi) * (W_o)
 M_sqr = M_sqr / Wavelength
 
 print(f"M_Squared value is: {M_sqr}")
+
+ax = plt.gca()
+ax.text(0.35, 0.95,
+        f"M² = {M_sqr:.2f}\n"
+        f"w₀ = {W_o:.3e} m\n"
+        f"z₀ = {Z_o:.3f} m",
+        transform=ax.transAxes,
+        verticalalignment='top',
+        bbox=dict(facecolor='white', alpha=0.8))
