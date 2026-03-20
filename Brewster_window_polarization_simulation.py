@@ -4,7 +4,6 @@ Created on Thu Mar 19 14:25:42 2026
 
 @author: 224252927
 """
-
 # -*- coding: utf-8 -*-
 """
 Created on Thu Feb  5 12:29:58 2026
@@ -16,22 +15,22 @@ import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt  
 
-theta = 0
-theta_val = np.deg2rad(theta)
 n_1 = 1
 n_2 = 1.5
 
 theta_I = np.deg2rad(np.arange(0, 90, 1))
 
+I_after_pol = []
 
-theta_R = np.arange(5, 100, 5)
+I_transmitted = []
 
+#%% Objects 
 class laser:
     def __init__ (self):
-        self.power = 1
+        self.power = 20e-3  # 20 mW
         self.wavelengh = 633E-9
-        self.polarization = (1/np.sqrt(2)) * np.array([[1],
-                                                       [1]])
+        self.polarization = (1/np.sqrt(2)) * np.array([[1],  #Horizontal
+                                                       [1]]) #Vertical
 
 class polariser:
     def __init__(self, inp):        
@@ -65,18 +64,16 @@ class polarization_of_wavefront:
         I_L = abs(L)**2
  
         self.df = pd.DataFrame({
-            "Horizontal": I_H,
-            "Vertical": I_V,
-            "Diagonal": I_D,
-            "Antidiagonal": I_A,
-            "Right": I_R,
-            "Left": I_L
-            })
+            "Horizontal": [I_H],
+            "Vertical": [I_V],
+            "Diagonal": [I_D],
+            "Antidiagonal": [I_A],
+            "Right": [I_R],
+            "Left": [I_L]
+        })
 
         return(self.df)
     
-#----------------------------------------------------------------
-
 def glass_plate(theta_I):
     theta_T = np.arcsin((n_1 / n_2) * np.sin(theta_I))
     
@@ -91,96 +88,105 @@ def glass_plate(theta_I):
     )**2
 
     return R_p, R_s
-# __________________________________________________________________
-
-Rp, Rs = glass_plate(theta_I)
-
-# Output_S_pol = np.array()
-# Output_P_pol = np.array()
-
-#---------------------------------------------------------
-
+    
+#%% Creation of objects 
 laser_obj = laser()
-
-pol_obj = polariser(theta_val)
 
 E_in = laser_obj.polarization
 
-E_s = E_in[0]  # s-component
-E_p = E_in[1]  # p-component
+pol1 = polariser(np.deg2rad(0))
+pol2 = polariser(np.deg2rad(45))
 
+#P_in = laser_obj.power()
 
+#%% Defining our polarization states from an unpolarized beam
+#%%
+# Defing the first polarizer angle and applying it to the input field 
 
-I_after_pol = []
+E_out_Pol_1 = pol1.linear_polarizer @ E_in
+
+df = pd.DataFrame(E_out_Pol_1)
+
+pol_wavefront_obj = polarization_of_wavefront()
+
+polarization_df = pol_wavefront_obj.values(E_out_Pol_1[0,0], E_out_Pol_1[1,0])
+
+print(f"\nHorizontal Basis polarization intensity: {polarization_df['Horizontal']}\n")
+
+#%%
+# Defing the second polariser angle and applying it to the output field from polarizer 1
+
+E_out_Pol_2 = pol2.linear_polarizer @ E_out_Pol_1
+
+df = pd.DataFrame(E_out_Pol_2)
+
+pol_wavefront_obj = polarization_of_wavefront()
+
+polarization_df = pol_wavefront_obj.values(E_out_Pol_2[0,0], E_out_Pol_2[1,0])
+
+print(f"\nHorizontal Basis polarization intensity: {polarization_df['Horizontal']}\n")
+
+#%% Passing E field onto the glass plate
+
+Rp, Rs = glass_plate(theta_I)
+
+I_after_pol = [] 
+
+val = 0
+analyzer = polariser(np.deg2rad(val))
 
 for i in range(len(theta_I)):
     
     # Reflection Jones matrix
-    # J_ref = np.array([
-    #     [np.sqrt(Rs[i]), 0],
-    #     [0, np.sqrt(Rp[i])]
-    # ])
-    
     J_ref = np.array([
-    [Rs[i], 0],
-    [0, Rp[i]]
-])
+        [np.sqrt(Rs[i]), 0],
+        [0, np.sqrt(Rp[i])]
+    ])
     
     # Reflected field
-    E_ref = J_ref @ E_in
+    E_ref = J_ref @ E_out_Pol_2 
     
-    # print(f"E_ref = {E_ref}")
-    
-    # Apply polarizer
-    E_out = pol_obj.linear_polarizer @ E_ref
+    E_out = analyzer.linear_polarizer @ E_ref
     
     # Intensity
     I_out = np.linalg.norm(E_out)**2
     
     I_after_pol.append(I_out)
     
-    
-print(f"Polarization is: {theta}\n")
 for i in  range(0, len(theta_I), 5):
     print(f"I_out_{i} = { I_after_pol[i]}")
-    
-plt.plot(np.rad2deg(theta_I), I_after_pol, label="After polarizer")
+
+plt.figure()
+plt.plot(np.rad2deg(theta_I), I_after_pol)
+plt.title(f"Reflected light After polarizer set at {val}")
 plt.xlabel("Incident Angle (degrees)")
-plt.ylabel("Intensity")
-plt.legend()
+plt.ylabel("Intensity after polarizer")
 plt.grid()
 plt.show()    
 
-#%%
+#%% P and S componenets spilt 
 
-for i in range(0, len(theta_R)):
-    Out_s = Rs[i] * E_s
-    Out_p = Rp[i] * E_p
+E_s = E_in[0]
+E_p = E_in[1]
 
+I_s = Rs #* np.abs(E_s)**2
+# I_p = Rp #* np.abs(E_p)**2
 
-#%%
-plt.plot(np.rad2deg(theta_I), Rp, label="Rp (p-pol -- Vertial polarization)")
-plt.plot(np.rad2deg(theta_I), Rs, label="Rs (s-pol -- Horizaontal polarization)")
+T_s = 1 - Rs
+# T_p = 1 - Rp
+
+plt.figure()
+# plt.plot(np.rad2deg(theta_I), I_p, label="Rp (p-pol -- V)")
+plt.plot(np.rad2deg(theta_I), I_s, label="Rs (s-pol -- H)")
+
+# plt.plot(np.rad2deg(theta_I), T_p, label="Tp (p-pol -- V)")
+plt.plot(np.rad2deg(theta_I), T_s, label="Ts (s-pol -- H)")
 plt.xlabel("Incident Angle (degrees)")
-plt.ylabel("Reflectance")
+plt.ylabel("Reflected Intensity")
+plt.title("Reflected light After polarizer set at 0")
 plt.legend()
 plt.grid()
 plt.show()
-
-#%%
-
-print(f"initial input polarization:\n{laser_obj.polarization}")
-print(f"\nPassing through polarizer at angle = {theta}")
-
-out = pol_obj.linear_polarizer @ laser_obj.polarization
-out = out / np.linalg.norm(out)
-
-df = pd.DataFrame(out)
-
-pol_wavefront_obj = polarization_of_wavefront()
-
-polarization_df = pol_wavefront_obj.values(df.iloc[0], df.iloc[1])
-
 print("\npolarization on each analyzer:")
 print(f"{polarization_df.iloc[0]}\n")
 # print("polarization_df.iloc[0]:.2f")  # 2 decimal places
