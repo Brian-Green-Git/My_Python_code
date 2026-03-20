@@ -15,8 +15,8 @@ class laser:
     def __init__ (self):
         self.power = 1
         self.wavelengh = 633E-9
-        self.polarization = (1/np.sqrt(2)) * np.array([[1],
-                                                       [0]])
+        self.polarization = (1/np.sqrt(2)) * np.array([[0],  #Horizontal
+                                                       [1]]) #Vertical
 
 class polariser:
     def __init__(self, inp):        
@@ -81,3 +81,5 @@ polarization_df = pol_wavefront_obj.values(df.iloc[0], df.iloc[1])
 
 print("\npolarization on each analyzer:")
 print(f"{polarization_df.iloc[0]}\n")
+
+print(f"\nHorizontal Basis polarization intensity: {polarization_df['Horizontal']}\n")
