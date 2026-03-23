@@ -4,6 +4,7 @@ Created on Thu Mar 19 14:25:42 2026
 
 @author: 224252927
 """
+
 # -*- coding: utf-8 -*-
 """
 Created on Thu Feb  5 12:29:58 2026
@@ -16,7 +17,7 @@ import pandas as pd
 import matplotlib.pyplot as plt  
 
 n_1 = 1
-n_2 = 1.5
+n_2 = 2
 
 theta_I = np.deg2rad(np.arange(0, 90, 1))
 
@@ -28,6 +29,7 @@ I_transmitted = []
 class laser:
     def __init__ (self):
         self.power = 20e-3  # 20 mW
+        self.waist = 0.008   # 1mm
         self.wavelengh = 633E-9
         self.polarization = (1/np.sqrt(2)) * np.array([[1],  #Horizontal
                                                        [1]]) #Vertical
@@ -95,9 +97,11 @@ laser_obj = laser()
 E_in = laser_obj.polarization
 
 pol1 = polariser(np.deg2rad(0))
-pol2 = polariser(np.deg2rad(45))
+pol2 = polariser(np.deg2rad(0))
 
-#P_in = laser_obj.power()
+P_in = laser_obj.power
+
+beam_A = np.pi * (laser_obj.waist)**2 
 
 #%% Defining our polarization states from an unpolarized beam
 #%%
@@ -151,7 +155,12 @@ for i in range(len(theta_I)):
     # Intensity
     I_out = np.linalg.norm(E_out)**2
     
+    if I_out < 1E-12:
+        I_out = 0
+    
     I_after_pol.append(I_out)
+    
+    
     
 for i in  range(0, len(theta_I), 5):
     print(f"I_out_{i} = { I_after_pol[i]}")
@@ -164,29 +173,40 @@ plt.ylabel("Intensity after polarizer")
 plt.grid()
 plt.show()    
 
+#%%
+
+Power = []
+
+print("\n\n")
+
+for i in range(len(I_after_pol)):
+    P_out = I_after_pol[i] / beam_A
+    Power.append(P_out)
+
+for i in  range(0, len(theta_I), 5):
+    print(f"power_out_{i} = {Power[i]}")
+   
+    
 #%% P and S componenets spilt 
 
-E_s = E_in[0]
-E_p = E_in[1]
+# E_s = E_in[0]
+# E_p = E_in[1]
 
-I_s = Rs #* np.abs(E_s)**2
-# I_p = Rp #* np.abs(E_p)**2
+# I_s = Rs #* np.abs(E_s)**2
+# # I_p = Rp #* np.abs(E_p)**2
 
-T_s = 1 - Rs
-# T_p = 1 - Rp
+# T_s = 1 - Rs
+# # T_p = 1 - Rp
 
-plt.figure()
-# plt.plot(np.rad2deg(theta_I), I_p, label="Rp (p-pol -- V)")
-plt.plot(np.rad2deg(theta_I), I_s, label="Rs (s-pol -- H)")
+# plt.figure()
+# # plt.plot(np.rad2deg(theta_I), I_p, label="Rp (p-pol -- V)")
+# plt.plot(np.rad2deg(theta_I), I_s, label="Rs (s-pol -- H)")
 
-# plt.plot(np.rad2deg(theta_I), T_p, label="Tp (p-pol -- V)")
-plt.plot(np.rad2deg(theta_I), T_s, label="Ts (s-pol -- H)")
-plt.xlabel("Incident Angle (degrees)")
-plt.ylabel("Reflected Intensity")
-plt.title("Reflected light After polarizer set at 0")
-plt.legend()
-plt.grid()
-plt.show()
-print("\npolarization on each analyzer:")
-print(f"{polarization_df.iloc[0]}\n")
-# print("polarization_df.iloc[0]:.2f")  # 2 decimal places
+# # plt.plot(np.rad2deg(theta_I), T_p, label="Tp (p-pol -- V)")
+# plt.plot(np.rad2deg(theta_I), T_s, label="Ts (s-pol -- H)")
+# plt.xlabel("Incident Angle (degrees)")
+# plt.ylabel("Reflected Intensity")
+# plt.title("Reflected light After polarizer set at 0")
+# plt.legend()
+# plt.grid()
+# plt.show()
