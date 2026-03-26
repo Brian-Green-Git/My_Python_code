@@ -16,6 +16,8 @@ import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt  
 
+#%%
+
 n_1 = 1
 n_2 = 2
 
@@ -210,3 +212,19 @@ plt.title("Reflected light After polarizer set at 0")
 plt.legend()
 plt.grid()
 plt.show()
+
+#%% importing experimental data
+
+df2 = pd.read_excel(r"C:\Users\Photonics LAB\Documents\Experimental results\Brewster experiment\Brewster_Data.xlsx")
+
+df2.shape
+
+Initial_p = df2["Initial_power"]
+Power_p1 = df2["Power_p1"]
+Power_p2 = df2["Power_p2"]
+Power_Io = df2["Power_Io_mW"]  # Io power in mW
+
+#%% isolating angular reuslts from extra columns containing intial power and changed powers after polarizers
+
+Exp_df = df2.iloc[:,[0,1,2,3,4]]
+
