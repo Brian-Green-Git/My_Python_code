@@ -189,24 +189,24 @@ for i in  range(0, len(theta_I), 5):
     
 #%% P and S componenets spilt 
 
-# E_s = E_in[0]
-# E_p = E_in[1]
+E_s = E_in[0]
+E_p = E_in[1]
 
-# I_s = Rs #* np.abs(E_s)**2
-# # I_p = Rp #* np.abs(E_p)**2
+I_s = Rs #* np.abs(E_s)**2
+# I_p = Rp #* np.abs(E_p)**2
 
-# T_s = 1 - Rs
-# # T_p = 1 - Rp
+T_s = 1 - Rs
+# T_p = 1 - Rp
 
-# plt.figure()
-# # plt.plot(np.rad2deg(theta_I), I_p, label="Rp (p-pol -- V)")
-# plt.plot(np.rad2deg(theta_I), I_s, label="Rs (s-pol -- H)")
+plt.figure()
+# plt.plot(np.rad2deg(theta_I), I_p, label="Rp (p-pol -- V)")
+plt.plot(np.rad2deg(theta_I), I_s, label="Rs (s-pol -- H)")
 
-# # plt.plot(np.rad2deg(theta_I), T_p, label="Tp (p-pol -- V)")
-# plt.plot(np.rad2deg(theta_I), T_s, label="Ts (s-pol -- H)")
-# plt.xlabel("Incident Angle (degrees)")
-# plt.ylabel("Reflected Intensity")
-# plt.title("Reflected light After polarizer set at 0")
-# plt.legend()
-# plt.grid()
-# plt.show()
+# plt.plot(np.rad2deg(theta_I), T_p, label="Tp (p-pol -- V)")
+plt.plot(np.rad2deg(theta_I), T_s, label="Ts (s-pol -- H)")
+plt.xlabel("Incident Angle (degrees)")
+plt.ylabel("Reflected Intensity")
+plt.title("Reflected light After polarizer set at 0")
+plt.legend()
+plt.grid()
+plt.show()
