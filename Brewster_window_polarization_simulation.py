@@ -228,3 +228,6 @@ Power_Io = df2["Power_Io_mW"]  # Io power in mW
 
 Exp_df = df2.iloc[:,[0,1,2,3,4]]
 
+Exp_df.shape
+
+
