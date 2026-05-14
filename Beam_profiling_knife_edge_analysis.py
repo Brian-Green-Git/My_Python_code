@@ -12,13 +12,16 @@ import matplotlib.pyplot as plt
 from scipy.optimize import curve_fit
 
 #%% Fetching data
-df = pd.read_csv(r"C:\Users\brian green\Desktop\Python\Python\Beam_profiling_results_01.csv")
+# df = pd.read_csv(r"C:\Users\brian green\Desktop\Python\Python\Beam_profiling_results_01.csv")
+
+df = pd.read_excel(r"C:\Users\Photonics LAB\Documents\Beam Profiling\Beam_profiling_data_09_04_26_001.xlsx")
 
 #%% Measurement positions of scanning sensor
 
-sensor_position = np.arange(0.02, 0.41, 0.02) # Positions are in meters
+sensor_position = np.arange(0.01, 0.64, 0.01)# Positions are in meters
 
 Beam_waist_vs_position_df = pd.DataFrame(sensor_position, columns = ["Position"])
+
 
 #%% Classes
 
@@ -26,26 +29,26 @@ class IndependentClean:
     def __init__(self, df):
         # Dropping all the NAN values in the Dataframes 
       
-        self.df1 = df[['Position_1', 'Intensity_1']].dropna()
-        self.df2 = df[['Position_2', 'Intensity_2']].dropna()
-        self.df3 = df[['Position_3', 'Intensity_3']].dropna()
-        self.df4 = df[['Position_4', 'Intensity_4']].dropna()
-        self.df5 = df[['Position_5', 'Intensity_5']].dropna()
-        self.df6 = df[['Position_6', 'Intensity_6']].dropna()
-        self.df7 = df[['Position_7', 'Intensity_7']].dropna()
-        self.df8 = df[['Position_8', 'Intensity_8']].dropna()
-        self.df9 = df[['Position_9', 'Intensity_9']].dropna()
-        self.df10 = df[['Position_10', 'Intensity_10']].dropna()
-        self.df11 = df[['Position_11', 'Intensity_11']].dropna()
-        self.df12 = df[['Position_12', 'Intensity_12']].dropna()
-        self.df13 = df[['Position_13', 'Intensity_13']].dropna()
-        self.df14 = df[['Position_14', 'Intensity_14']].dropna()
-        self.df15 = df[['Position_15', 'Intensity_15']].dropna()
-        self.df16 = df[['Position_16', 'Intensity_16']].dropna()
-        self.df17 = df[['Position_17', 'Intensity_17']].dropna()
-        self.df18 = df[['Position_18', 'Intensity_18']].dropna()
-        self.df19 = df[['Position_19', 'Intensity_19']].dropna()
-        self.df20 = df[['Position_20', 'Intensity_20']].dropna()
+        self.df1 = df[['Position (mm) Run #1', 'Light Intensity (%) Run #1']].dropna()
+        self.df2 = df[['Position (mm) Run #2', 'Light Intensity (%) Run #2']].dropna()
+        self.df3 = df[['Position (mm) Run #3', 'Light Intensity (%) Run #3']].dropna()
+        self.df4 = df[['Position (mm) Run #4', 'Light Intensity (%) Run #4']].dropna()
+        self.df5 = df[['Position (mm) Run #5', 'Light Intensity (%) Run #5']].dropna()
+        self.df6 = df[['Position (mm) Run #6', 'Light Intensity (%) Run #6']].dropna()
+        self.df7 = df[['Position (mm) Run #7', 'Light Intensity (%) Run #7']].dropna()
+        self.df8 = df[['Position (mm) Run #8', 'Light Intensity (%) Run #8']].dropna()
+        self.df9 = df[['Position (mm) Run #9', 'Light Intensity (%) Run #9']].dropna()
+        self.df10 = df[['Position (mm) Run #10', 'Light Intensity (%) Run #10']].dropna()
+        self.df11 = df[['Position (mm) Run #11', 'Light Intensity (%) Run #11']].dropna()
+        self.df12 = df[['Position (mm) Run #12', 'Light Intensity (%) Run #12']].dropna()
+        self.df13 = df[['Position (mm) Run #13', 'Light Intensity (%) Run #13']].dropna()
+        self.df14 = df[['Position (mm) Run #14', 'Light Intensity (%) Run #14']].dropna()
+        self.df15 = df[['Position (mm) Run #15', 'Light Intensity (%) Run #15']].dropna()
+        self.df16 = df[['Position (mm) Run #16', 'Light Intensity (%) Run #16']].dropna()
+        self.df17 = df[['Position (mm) Run #17', 'Light Intensity (%) Run #17']].dropna()
+        self.df18 = df[['Position (mm) Run #18', 'Light Intensity (%) Run #18']].dropna()
+        self.df19 = df[['Position (mm) Run #19', 'Light Intensity (%) Run #19']].dropna()
+        self.df20 = df[['Position (mm) Run #20', 'Light Intensity (%) Run #20']].dropna()
         
 class Recombine(IndependentClean):
     def __init__(self, df):
@@ -112,32 +115,41 @@ cleaned = Recombine(df)
 #%% Recombining Data cleaned data 
 final_df = cleaned.combined()
 
+
+
+#%% Convert all transverse beam-profile positions from mm to m
+
+for i in range(1, 21):
+    col_name = f"Position (mm) Run #{i}"
+    final_df[col_name] = final_df[col_name] * 1e-3
+        
 #%% Plotting the cleaned data 
 
 # Plotting each incremented graph
-# for i in range (1, 21, 4): 
+# for i in range (1, 21, 1): 
 #     plt.figure()
-#     plt.plot(final_df["Position_"+ str(i)], final_df["Intensity_"+ str(i)], color = "red", linestyle='--')
-#     plt.scatter(final_df["Position_"+ str(i)], final_df["Intensity_"+ str(i)], color = "cyan", zorder = 2)
-#     plt.xlabel("Position_" + str(i))
-#     plt.ylabel("Intensity_"+ str(i))
-#     plt.title("Intensity_"+ str(i) + " VS Position_" + str(i))
+#     plt.plot(final_df["Position (mm) Run #"+ str(i)], final_df["Light Intensity (%) Run #"+ str(i)], color = "red", linestyle='--')
+#     plt.scatter(final_df["Position (mm) Run #"+ str(i)], final_df["Light Intensity (%) Run #"+ str(i)], color = "cyan", zorder = 2)
+#     plt.xlabel("Position (mm) Run #" + str(i))
+#     plt.ylabel("Light Intensity (%) Run #"+ str(i))
+#     plt.title("Light Intensity (%) Run #"+ str(i) + " VS Position (mm) Run #" + str(i))
 #     plt.show()
     
 #%% Fitting the data and extracting the beam waist
 
 beam_waist_list = []
+accepted_positions = []
 
 def beam_waist(sigma):
-    beam_waist = 2 * sigma
-    beam_waist_list.append(beam_waist)  
+    beam_waist = 2 * abs(sigma)
+    beam_waist_list.append(beam_waist)
     
     # print("Beam waist (1/e^2 radius):", beam_waist    
 
 for i in range(1, 21, 1):
     
-    x = final_df["Position_" + str(i)]
-    y = final_df["Intensity_" + str(i)]
+    x = final_df["Position (mm) Run #" + str(i)]
+    y = final_df["Light Intensity (%) Run #" + str(i)]
     
     x = x.dropna()
     y = y.dropna()
@@ -147,7 +159,18 @@ for i in range(1, 21, 1):
     
     # Fit the curve
     popt, pcov = curve_fit(Fitting.gaussian, x, y, p0=Fitting.guess(x, y))
+ 
     
+# filter by fit quality
+#================================
+    uncertainty = np.sqrt(np.diag(pcov))
+    relative_error = uncertainty / np.abs(popt)
+    
+    if np.any(relative_error > 0.5):
+        print(f"Run {i} rejected: high relative uncertainty")
+        continue
+#================================
+
     amplitude, mean, sigma, offset = popt
  
     # Create a sorted x-axis for a smooth, single line
@@ -155,15 +178,26 @@ for i in range(1, 21, 1):
     # x_smooth = np.linspace(mean - 4*sigma, mean + 4*sigma, 500) # smooth tail on both sides
     t = Fitting.gaussian(x_smooth, *popt)
     
-    beam_waist(sigma)
+    print(f"Run {i}: sigma = {sigma:.3e} m, waist = {2*abs(sigma):.3e} m, mean = {mean:.3e} m")
+    
+# Throw away bad runs
+#=====================================
+    if 1e-5 < 2*abs(sigma) < 1e-3:
+        beam_waist(sigma)
+        accepted_positions.append(sensor_position[i-1])
+    else:
+        print(f"Run {i} rejected: waist = {2*abs(sigma):.3e} m")
+#=====================================
+    
+    # beam_waist(sigma)
     
     # equation = f"y_{i} = {amplitude:.10f} * exp(-(x - {mean:.10f})^2 / (2 * {sigma:.10f}^2))"
     # print(f"\nPosition {i} Equation: {equation}\n\n")
        
     # plt.figure()
     # plt.legend()
-    # plt.xlabel("Position_" + str(i))
-    # plt.ylabel("Intensity_" + str(i))
+    # plt.xlabel("Position (mm) Run #" + str(i))
+    # plt.ylabel("Light Intensity (%) Run #" + str(i))
     # # Plot the results
     # plt.scatter(x, y, label='Data', color='black')
     # # plt.plot(x, y, color = "black", zorder = 2 )
@@ -175,9 +209,13 @@ for i in range(1, 21, 1):
     
 #%%
 
-Beam_waist_vs_position_df["Waist"] = beam_waist_list
+Beam_waist_vs_position_df = pd.DataFrame({
+    "Position": accepted_positions,
+    "Waist": beam_waist_list
+})
 
 Beam_waist_vs_position_df["Waist^2"] = Beam_waist_vs_position_df["Waist"]**2
+
 
 #%% Plotting Position VS beam waist
 
@@ -220,16 +258,6 @@ y_pred = p_function(x)
 x_smooth = np.linspace(x.min(), x.max(), 100)
 y_smooth = p_function(x_smooth)
 
-plt.figure()
-plt.title("Position VS Waist Squared")
-plt.xlabel("Positon of sensor")
-plt.ylabel("Beam waist squared")
-plt.scatter(x, y, label="Data Points", color="blue")
-plt.plot(x, y, color = "blue", zorder = 2)
-plt.plot(x_smooth, y_smooth, label="Parabolic Fit", color="red")
-plt.legend()
-plt.show()
-
 #%%
 
 pi = 3.14159
@@ -240,21 +268,29 @@ Z_o = float()
 
 #%%
 
-Z_o = b/(-2 * a) 
+Z_o = -b / (2 * a)
+
+if a <= 0:
+    raise ValueError("Quadratic coefficient a must be positive for a physical beam propagation fit.")
+
+w0_sq = c - a * Z_o**2
+if w0_sq <= 0:
+    raise ValueError("Computed w0^2 is non-positive. Fit is not physically valid.")
+
+W_o = np.sqrt(w0_sq)
+M_sqr = (np.pi * W_o * np.sqrt(a)) / Wavelength
 
 print(f"\n\nZ_0 value is: {Z_o} meters")
-
-W_o = np.sqrt(((c) - ((a)*(Z_o)**2)))
-
 print(f"W_o is : {W_o}")
-
-val = np.sqrt(a)
-
-M_sqr = val * (pi) * (W_o)
-
-M_sqr = M_sqr / Wavelength
-
 print(f"M_Squared value is: {M_sqr}")
+
+plt.figure()
+plt.title("Position VS Beam Waist Squared")
+plt.xlabel("Position of sensor (m)")
+plt.ylabel("Beam waist squared (m$^2$)")
+plt.scatter(x, y, label="Data Points", color="blue")
+plt.plot(x, y, color="blue", zorder=2)
+plt.plot(x_smooth, y_smooth, label="Parabolic Fit", color="red")
 
 ax = plt.gca()
 ax.text(0.35, 0.95,
@@ -264,3 +300,6 @@ ax.text(0.35, 0.95,
         transform=ax.transAxes,
         verticalalignment='top',
         bbox=dict(facecolor='white', alpha=0.8))
+
+plt.legend()
+plt.show()
